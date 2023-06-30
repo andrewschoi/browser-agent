@@ -3,6 +3,12 @@ from bs4 import BeautifulSoup, NavigableString
 import collections
 
 class Context():
+  """
+  A relational representation of html context.
+  - descendents[<tag>]: a list of tags that are nested within <tag>
+  - siblings[<tag>]: a list of tags that are on the same level as <tag>
+  - parents[<tag>]: an ordered list of tages that contain <tag> as a descendent
+  """
   def __init__(self, descendents=[], siblings=[], parents=[]):
     self.descendents = descendents
     self.siblings = siblings
@@ -10,6 +16,13 @@ class Context():
 
 
 class ContextBuilder():
+  """
+  Builds a [Context] based on html string [html]
+
+  Example usage:
+    some_html_string = <h1>hello world<h1>
+    some_context = ContextBuilder(some_html_string).build()
+  """
   def __init__(self, html):
     self.html = html
     self.siblings = collections.defaultdict(list)
