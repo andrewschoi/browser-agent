@@ -5,11 +5,13 @@ import collections
 class Context():
   """
   A relational representation of html context.
+  - html: the associated html string
   - descendents[<tag>]: a list of tags that are nested within <tag>
   - siblings[<tag>]: a list of tags that are on the same level as <tag>
   - parents[<tag>]: an ordered list of tages that contain <tag> as a descendent
   """
-  def __init__(self, descendents=[], siblings=[], parents=[]):
+  def __init__(self, html, descendents=[], siblings=[], parents=[]):
+    self.html = html
     self.descendents = descendents
     self.siblings = siblings
     self.parents = parents
@@ -58,7 +60,7 @@ class ContextBuilder():
       self.parents[tag] = sorted(par, key=lambda tag: rank[tag], reverse=True)
 
 
-    return Context(descendents=self.descendents, siblings=self.siblings, parents=self.parents)
+    return Context(self.html, descendents=self.descendents, siblings=self.siblings, parents=self.parents)
 
     
     
