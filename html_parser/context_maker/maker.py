@@ -1,4 +1,5 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
+
 import collections
 
 class Context():
@@ -17,7 +18,7 @@ class ContextBuilder():
   
 
   def build(self):
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(self.html, "html.parser")
     rank = {}
     root = soup.find('html')
     q = [root]
@@ -26,20 +27,22 @@ class ContextBuilder():
       for _ in range(len(q)):
         node = q.pop(0)
         for child in node.children:
+          if type(child) == NavigableString:
+            continue
           q.append(child)
         rank[child] = current_level
       current_level += 1
     
     for tag in soup.findAll():
-      descendents[tag] = tag.descendents
-      siblings[tag] = tag.siblings
+      self.descendents[tag] = tag.descendents
+      self.siblings[tag] = tag.siblings
     
     for tag in soup.findAll():
       par = []
-      for [node, descendents] in descendents:
-        if tag in descendents:
-          par.append(par)
-      parents[tag] = sorted(par, lambda tag: rank[tag], reverse=True)
+      for  node, desc in self.descendents.items():
+        if desc is not None and tag in desc:
+          par.append(node)
+      self.parents[tag] = sorted(par, key=lambda tag: rank[tag], reverse=True)
 
 
     return Context(descendents=self.descendents, siblings=self.siblings, parents=self.parents)
