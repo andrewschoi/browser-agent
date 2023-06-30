@@ -1,4 +1,4 @@
-from html_parser.context_maker import maker
+from html_parser.context_maker.maker import ContextBuilder
 import unittest
 
 
@@ -10,7 +10,8 @@ with open('html_parser/test/html_samples/story.html', 'r') as f:
 
 
 class TestMaker(unittest.TestCase):
-  def test_simple(self):
-    pass
+  def test_build_successful(self):
+    story_context = ContextBuilder(story).build()
+    form_context = ContextBuilder(form).build()    
 
 unittest.main()
