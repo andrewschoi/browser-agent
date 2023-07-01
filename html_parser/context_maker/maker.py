@@ -1,5 +1,6 @@
-from bs4 import BeautifulSoup, NavigableString
-
+from bs4 import BeautifulSoup
+from bs4.element import Tag
+import json
 import collections
 
 class Context():
@@ -15,6 +16,14 @@ class Context():
     self.descendents = descendents
     self.siblings = siblings
     self.parents = parents
+    
+
+  def __str__(self):
+    return json.dumps({
+      "descendents": self.descendents,
+      "siblings": self.siblings,
+      "parents": self.parents
+    })
 
 
 class ContextBuilder():
@@ -42,10 +51,11 @@ class ContextBuilder():
       for _ in range(len(q)):
         node = q.pop(0)
         for child in node.children:
-          if type(child) == NavigableString:
+          if child is None:
             continue
-          q.append(child)
-        rank[child] = current_level
+          if isinstance(child, Tag):
+            q.append(child)
+        rank[node] = current_level
       current_level += 1
     
     for tag in soup.findAll():
