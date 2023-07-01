@@ -7,13 +7,13 @@ class Context():
   """
   A relational representation of html context.
   - html: the associated html string
-  - descendents[<tag>]: a list of tags that are nested within <tag>
+  - children[<tag>]: a list of tags that are nested within <tag>
   - siblings[<tag>]: a list of tags that are on the same level as <tag>
-  - parents[<tag>]: an ordered list of tages that contain <tag> as a descendent
+  - parents[<tag>]: an ordered list of tages that contain <tag> as a descendant
   """
-  def __init__(self, html, descendents=[], siblings=[], parents=[]):
+  def __init__(self, html, children=[], siblings=[], parents=[]):
     self._html = html
-    self._descendents = descendents
+    self._children = children
     self._siblings = siblings
     self._parents = parents
   
@@ -26,8 +26,8 @@ class Context():
     return self._siblings
   
   @property
-  def descendents(self):
-    return self._descendents
+  def children(self):
+    return self._children
   
   @property
   def html(self):
@@ -35,7 +35,7 @@ class Context():
 
   def __str__(self):
     return json.dumps({
-      "descendents": self.descendents,
+      "children": self.children,
       "siblings": self.siblings,
       "parents": self.parents
     })
@@ -52,39 +52,25 @@ class ContextBuilder():
   def __init__(self, html):
     self.html = html
     self.siblings = collections.defaultdict(list)
-    self.descendents =  collections.defaultdict(list)
+    self.children =  collections.defaultdict(list)
     self.parents = collections.defaultdict(list)
   
 
   def build(self):
     soup = BeautifulSoup(self.html, "html.parser")
-    rank = {}
-    q = [soup]
-    current_level = 0
-    while len(q) > 0:
-      for _ in range(len(q)):
-        node = q.pop(0)
-        for child in node.children:
-          if child is None:
-            continue
-          if isinstance(child, Tag):
-            q.append(child)
-        rank[node] = current_level
-      current_level += 1
     
     for tag in soup.findAll():
-      self.descendents[tag] = tag.descendents
-      self.siblings[tag] = tag.siblings
+      if isinstance(tag, Tag):
+        self.children[tag] = list(tag.descendants)
+        self.siblings[tag] = list(tag.next_siblings)
+      else:
+        self.children[tag] = []
+        self.siblings[tag] = []
+
+      self.parents[tag] = tag.parents 
     
-    for tag in soup.findAll():
-      par = []
-      for  node, desc in self.descendents.items():
-        if desc is not None and tag in desc:
-          par.append(node)
-      self.parents[tag] = sorted(par, key=lambda tag: rank[tag], reverse=True)
 
-
-    return Context(self.html, descendents=self.descendents, siblings=self.siblings, parents=self.parents)
+    return Context(self.html, children=self.children, siblings=self.siblings, parents=self.parents)
 
     
     
