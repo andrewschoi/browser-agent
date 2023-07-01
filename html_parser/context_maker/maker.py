@@ -12,11 +12,26 @@ class Context():
   - parents[<tag>]: an ordered list of tages that contain <tag> as a descendent
   """
   def __init__(self, html, descendents=[], siblings=[], parents=[]):
-    self.html = html
-    self.descendents = descendents
-    self.siblings = siblings
-    self.parents = parents
-    
+    self._html = html
+    self._descendents = descendents
+    self._siblings = siblings
+    self._parents = parents
+  
+  @property
+  def parents(self):
+    return self._parents
+  
+  @property
+  def siblings(self):
+    return self._siblings
+  
+  @property
+  def descendents(self):
+    return self._descendents
+  
+  @property
+  def html(self):
+    return self._html
 
   def __str__(self):
     return json.dumps({
