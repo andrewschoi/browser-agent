@@ -59,8 +59,7 @@ class ContextBuilder():
   def build(self):
     soup = BeautifulSoup(self.html, "html.parser")
     rank = {}
-    root = soup.find('html')
-    q = [root]
+    q = [soup]
     current_level = 0
     while len(q) > 0:
       for _ in range(len(q)):
