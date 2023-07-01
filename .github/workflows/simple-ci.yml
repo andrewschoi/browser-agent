@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkoutv2
+        uses: actions/checkout@v2
 
       - name: Create Python environment
         uses: actions/setup-python@v2
