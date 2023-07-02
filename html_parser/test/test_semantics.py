@@ -36,6 +36,8 @@ class TestBasePage(unittest.TestCase):
     def test_build_successful(self):
         Page(form)
         Page(story)
+        print(Page(form).header_text())
+        print(Page(story).header_text())
 
 
 unittest.main()

@@ -2,15 +2,23 @@ from bs4 import BeautifulSoup
 
 
 class Page:
+    """
+    Consolidates the essential information found in a HTML webpage: webpage
+    text-content, interactable elements, header text-content, etc.
+    """
+
     def __init__(self, html):
-        soup = BeautifulSoup(html, "html.parser")
+        self._soup = BeautifulSoup(html, "html.parser")
         self._html = html
-        self._text = soup.get_text(separator="\n", strip=True)
-        self._interactable_elements = soup.find_all(["a", "input", "select", "button"])
-        self._buttons = soup.find_all(["button"])
-        self._hrefs = soup.find_all(["a"])
-        self._inputs = soup.find_all(["input"])
-        self._selects = soup.find_all(["select"])
+        self._title = self._soup.find("title")
+        self._text = self._soup.get_text(separator="\n", strip=True)
+        self._interactable_elements = self._soup.find_all(
+            ["a", "input", "select", "button"]
+        )
+        self._buttons = self._soup.find_all(["button"])
+        self._hrefs = self._soup.find_all(["a"])
+        self._inputs = self._soup.find_all(["input"])
+        self._selects = self._soup.find_all(["select"])
 
     @property
     def html(self):
@@ -39,3 +47,9 @@ class Page:
     @property
     def selects(self):
         return self._selects
+
+    def header_text(self):
+        headers = self._soup.find_all(["header", "h1", "h2", "h3", "h4", "h5", "h6"])
+        return "\n".join(
+            list(map(lambda tag: tag.get_text(separator="\n", strip=True), headers))
+        )

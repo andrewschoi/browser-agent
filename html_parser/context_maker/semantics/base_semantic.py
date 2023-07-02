@@ -3,6 +3,25 @@ from bs4.element import Tag, NavigableString
 
 
 class Semantic:
+    """
+    Builder class for the most 'vague' form of a bs4.element.Tag or
+    bs4.element.NavigableString semantic. Gives ability to access a particular
+    tag's children, sibling, or k parents, with additional options, such as
+    text-only, tags without class attributes, or tags without styles
+
+    Example usage:
+    - some_html = <html-string>
+    - some_context = Context(some_html)
+    - some_html_root = BeautifulSoup(some_html, 'html.parser')
+    - some_tag_semantic =
+        Semantic(tag=some_html_root, context=some_context)
+        .with_children()
+        .with_siblings()
+        .with_parents()
+        .with_text_only()
+        .build()
+    """
+
     def __init__(self, tag=None, context=None):
         self._tag = tag
         self._context = context
