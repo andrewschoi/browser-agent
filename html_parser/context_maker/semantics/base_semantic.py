@@ -1,6 +1,5 @@
 import json
 from bs4.element import Tag, NavigableString
-import collections
 
 
 class Semantic:
@@ -46,21 +45,21 @@ class Semantic:
     def with_text_only(self):
         self._children = list(
             map(
-                lambda tag: tag.get_text() if isinstance(tag, Tag) else tag,
+                lambda tag: tag.get_text(strip=True) if isinstance(tag, Tag) else tag,
                 self._children,
             )
         )
 
         self._siblings = list(
             map(
-                lambda tag: tag.get_text() if isinstance(tag, Tag) else tag,
-                self._sibling,
+                lambda tag: tag.get_text(strip=True) if isinstance(tag, Tag) else tag,
+                self._siblings,
             )
         )
 
         self._parents = list(
             map(
-                lambda tag: tag.get_text() if isinstance(tag, Tag) else tag,
+                lambda tag: tag.get_text(strip=True) if isinstance(tag, Tag) else tag,
                 self._parents,
             )
         )
