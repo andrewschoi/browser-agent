@@ -1,5 +1,5 @@
 import json
-from bs4.element import Tag
+from bs4.element import Tag, NavigableString
 import collections
 
 
@@ -32,13 +32,16 @@ class Semantic:
         return self._parents
 
     def with_children(self):
-        self._children = self._context["children"]
+        self._children = self._context.children[self._tag]
+        return self
 
     def with_siblings(self):
-        self._siblings = self._context["siblings"]
+        self._siblings = self._context.siblings[self._tag]
+        return self
 
     def with_parents(self, k=3):
-        self._parents = self._context["parents"][:k]
+        self._parents = self._context.parents[self._tag][:k]
+        return self
 
     def with_text_only(self):
         self._children = list(
@@ -62,36 +65,43 @@ class Semantic:
             )
         )
 
+        return self
+
     def without_classes(self):
         self._without_attr("class")
         self._without_attr("className")
+        return self
 
     def without_style(self):
         self._without_attr("style")
+        return self
 
     def _without_attr(self, attr):
-        new_children = collections.defaultdict(list)
-        for old_tag, old_children in self._children:
-            old_tag.pop(attr, None)
-            for child in old_children:
-                child.pop(attr, None)
-                new_children[old_tag].append(child)
+        new_children = []
+        for old_child in self._children:
+            if isinstance(old_child, NavigableString):
+                continue
+            if old_child.attr is not None and attr in old_child.attr:
+                del old_child[attr]
+            new_children.append(old_child)
         self._children = new_children
 
-        new_siblings = collections.defaultdict(list)
-        for old_tag, old_siblings in self._siblings:
-            old_tag.pop(attr, None)
-            for child in old_siblings:
-                child.pop(attr, None)
-                new_siblings[old_tag].append(child)
+        new_siblings = []
+        for old_sibling in self._siblings:
+            if isinstance(old_sibling, NavigableString):
+                continue
+            if old_sibling.attr is not None and attr in old_sibling.attr:
+                del old_sibling[attr]
+            new_siblings.append(old_sibling)
         self._siblings = new_siblings
 
-        new_parents = collections.defaultdict(list)
-        for old_tag, old_parents in self._parents:
-            old_tag.pop(attr, None)
-            for child in old_parents:
-                child.pop(attr, None)
-            new_parents[old_tag].append(child)
+        new_parents = []
+        for old_parent in self._parents:
+            if isinstance(old_parent, NavigableString):
+                continue
+            if old_parent.attr is not None and attr in old_parent.attr:
+                del old_parent[attr]
+            new_parents.append(old_parent)
         self._parents = new_parents
 
     def build(self):

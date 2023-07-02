@@ -71,7 +71,7 @@ class ContextBuilder:
                 self.children[tag] = []
                 self.siblings[tag] = []
 
-            self.parents[tag] = tag.parents
+            self.parents[tag] = list(tag.parents)
 
         return Context(
             self.html,
