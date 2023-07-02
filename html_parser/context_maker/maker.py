@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from bs4.element import Tag
+from bs4.element import Tag, NavigableString
 import json
 import collections
 
@@ -60,7 +60,6 @@ class ContextBuilder:
         self.children = collections.defaultdict(list)
         self.parents = collections.defaultdict(list)
 
-    def build(self):
         soup = BeautifulSoup(self.html, "html.parser")
 
         for tag in soup.findAll():
@@ -73,6 +72,39 @@ class ContextBuilder:
 
             self.parents[tag] = list(tag.parents)
 
+    def _is_accessibility_tag(self, tag):
+        if tag is None:
+            return False
+        if isinstance(tag, NavigableString):
+            return True
+
+        # tag must be an instance of bs4.elements.Tag
+        for attr in tag.attrs.keys():
+            if "aria" in attr:
+                return True
+
+        return False
+
+    def with_accessibility_only(self):
+        new_siblings = []
+        for tag in self.siblings:
+            if self._is_accessibility_tag(tag):
+                new_siblings.append(tag)
+        self.siblings = new_siblings
+
+        new_children = []
+        for tag in self.children:
+            if self._is_accessibility_tag(tag):
+                new_children.append(tag)
+        self.children = new_children
+
+        new_parents = []
+        for tag in self.parents:
+            if self._is_accessibility_tag(tag):
+                new_parents.append(tag)
+        self.parents = new_parents
+
+    def build(self):
         return Context(
             self.html,
             children=self.children,
