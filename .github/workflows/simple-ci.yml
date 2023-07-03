@@ -23,3 +23,6 @@ jobs:
 
       - name: Run tests
         run: make test
+
+      - name: Check coverage
+        run: coverage report --fail-under=60
