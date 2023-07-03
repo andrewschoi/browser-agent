@@ -1,7 +1,6 @@
 from html_parser.context_maker.maker import ContextBuilder
 from html_parser.context_maker.semantics.base_semantic import Semantic
 from html_parser.context_maker.semantics.base_page import Page
-from html_parser.context_maker.semantics.counter import Counter
 from bs4 import BeautifulSoup
 import unittest
 
@@ -37,11 +36,6 @@ class TestBasePage(unittest.TestCase):
     def test_build_successful(self):
         Page(form)
         Page(story)
-
-
-class TestCounter(unittest.TestCase):
-    def test_build_successful(self):
-        Counter(3)
 
 
 unittest.main()
