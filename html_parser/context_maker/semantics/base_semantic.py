@@ -24,7 +24,11 @@ class Semantic:
 
     def __init__(self, tag=None, context=None):
         self._tag = tag
-        self._type = tag.get("type", None)
+        self._id = tag.get("id", None)
+        self._name = tag.get("name", None)
+        self._tag_name = tag.name
+        self._classes = tag.get("class")
+
         self._context = context
         self._children = []
         self._siblings = []
@@ -36,8 +40,20 @@ class Semantic:
         return self._tag
 
     @property
-    def type(self):
-        return self._type
+    def id(self):
+        return self._id
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def tag_name(self):
+        return self._tag_name
+
+    @property
+    def classes(self):
+        return self._classes
 
     @property
     def context(self):
