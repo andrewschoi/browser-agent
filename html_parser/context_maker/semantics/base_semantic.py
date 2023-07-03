@@ -24,14 +24,20 @@ class Semantic:
 
     def __init__(self, tag=None, context=None):
         self._tag = tag
+        self._type = tag.get("type", None)
         self._context = context
         self._children = []
         self._siblings = []
         self._parents = []
+        self._ordering = ["input"]
 
     @property
     def tag(self):
         return self._tag
+
+    @property
+    def type(self):
+        return self._type
 
     @property
     def context(self):
@@ -136,4 +142,46 @@ class Semantic:
                 "siblings": self._siblings,
                 "parents": self._parents,
             }
+        )
+
+    def semantic_comparator(self, type):
+        if self._name == "input":
+            if self._type is None:
+                return -1
+            if self._type == "email":
+                return -1
+            if self._type == "password":
+                return -1
+            if self._type == "text":
+                return -1
+            if self._type == "submit":
+                return 1
+
+        if self._name == "select":
+            return -1
+
+        if self._name == "a":
+            return 0
+
+        if self._name == "button":
+            return 1
+
+    def __lt__(self, other):
+        return self.semantic_comparator(self._name) < other.semantic_comparator(
+            other.name
+        )
+
+    def __eq__(self, other):
+        return self.semantic_comparator(self._name) == other.semantic_comparator(
+            other.name
+        )
+
+    def __gt__(self, other):
+        return self.semantic_comparator(self._name) > other.semantic_comparator(
+            other.name
+        )
+
+    def __ne__(self, other):
+        return self.semantic_comparator(self._name) != other.semantic_comparator(
+            other.name
         )
