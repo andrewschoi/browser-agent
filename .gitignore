@@ -6,3 +6,4 @@ pyvenv.cfg
 *.pyc
 .vscode
 .coverage
+geckodriver.log
