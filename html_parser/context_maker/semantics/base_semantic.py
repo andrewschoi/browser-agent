@@ -36,7 +36,7 @@ class Semantic:
         self._siblings = []
         self._parents = []
 
-    def _xpath_from_tag(tag):
+    def _xpath_from_tag(self, tag):
         lxml_element = html.fromstring(str(tag))
         tree = lxml_element.getroottree()
         xpath = tree.getpath(lxml_element)
