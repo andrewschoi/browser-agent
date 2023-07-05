@@ -28,7 +28,7 @@ class Semantic:
         self._id = tag.get("id", None)
         self._name = tag.get("name", None)
         self._tag_name = tag.name  # this is the tag type (i.e. h1)
-        self._classes = tag.get("class")
+        self._classes = tag.get("class", None)
         self._xpath = self._xpath_from_tag(tag)
 
         self._context = context
