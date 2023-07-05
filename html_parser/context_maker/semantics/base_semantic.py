@@ -27,7 +27,7 @@ class Semantic:
         self._tag = tag
         self._id = tag.get("id", None)
         self._name = tag.get("name", None)
-        self._tag_name = tag.name
+        self._tag_name = tag.name  # this is the tag type (i.e. h1)
         self._classes = tag.get("class")
         self._xpath = self._xpath_from_tag(tag)
 
@@ -37,6 +37,8 @@ class Semantic:
         self._parents = []
 
     def _xpath_from_tag(self, tag):
+        if isinstance(tag, NavigableString):
+            tag = tag.parent
         lxml_element = html.fromstring(str(tag))
         tree = lxml_element.getroottree()
         xpath = tree.getpath(lxml_element)
