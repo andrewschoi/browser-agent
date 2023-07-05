@@ -2,21 +2,21 @@ class AttemptFailureException(Exception):
     pass
 
 
-class Counter:
+class Judge:
     """
     A simple representation of progress.
 
     Example usage:
-        counter = Counter(tasks_remaining=1)
+        judge = Judge(tasks_remaining=1)
 
-        @counter.attempt
+        @judge.attempt
         def click_submit():
             <some code...>
 
         click_submit()
 
         #if click_submit() is successful (no exception is thrown)
-        print(counter.is_finished()) # should print True, otherwise False
+        print(judge.is_finished()) # should print True, otherwise False
 
     """
 
