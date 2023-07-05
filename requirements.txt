@@ -9,6 +9,7 @@ coverage==7.2.7
 exceptiongroup==1.1.2
 h11==0.14.0
 idna==3.4
+lxml==4.9.3
 mypy-extensions==1.0.0
 outcome==1.2.0
 packaging==23.1
