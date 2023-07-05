@@ -1,5 +1,6 @@
 import json
 from bs4.element import Tag, NavigableString
+from lxml import html
 
 
 class Semantic:
@@ -28,12 +29,18 @@ class Semantic:
         self._name = tag.get("name", None)
         self._tag_name = tag.name
         self._classes = tag.get("class")
+        self._xpath = self._xpath_from_tag(tag)
 
         self._context = context
         self._children = []
         self._siblings = []
         self._parents = []
-        self._ordering = ["input"]
+
+    def _xpath_from_tag(tag):
+        lxml_element = html.fromstring(str(tag))
+        tree = lxml_element.getroottree()
+        xpath = tree.getpath(lxml_element)
+        return xpath
 
     @property
     def tag(self):
@@ -54,6 +61,10 @@ class Semantic:
     @property
     def classes(self):
         return self._classes
+
+    @property
+    def xpath(self):
+        return self._xpath
 
     @property
     def context(self):
