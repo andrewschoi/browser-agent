@@ -17,18 +17,18 @@ class TestBaseSemantic(unittest.TestCase):
         story_context = ContextBuilder(story).build()
         soup = BeautifulSoup(story, "html.parser")
         for tag in soup.find_all():
-            Semantic(tag, story_context).build()
-            Semantic(tag, story_context).with_children().build()
-            Semantic(tag, story_context).with_siblings().build()
-            Semantic(tag, story_context).with_parents().build()
+            Semantic(soup, tag=tag, context=story_context).build()
+            Semantic(soup, tag=tag, context=story_context).with_children().build()
+            Semantic(soup, tag=tag, context=story_context).with_siblings().build()
+            Semantic(soup, tag=tag, context=story_context).with_parents().build()
             Semantic(
-                tag, story_context
+                soup, tag=tag, context=story_context
             ).with_children().with_siblings().with_parents().build()
             Semantic(
-                tag, story_context
+                soup, tag=tag, context=story_context
             ).with_children().with_siblings().with_parents().without_classes().build()
             Semantic(
-                tag, story_context
+                soup, tag=tag, context=story_context
             ).with_children().with_siblings().with_parents().with_text_only().build()
 
 

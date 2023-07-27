@@ -10,7 +10,7 @@ class TestBrowser(unittest.TestCase):
             options = Options()
             options.headless = True
             driver = webdriver.Firefox(options=options)
-            browser = BrowserSingleton(driver, None)
+            browser = BrowserSingleton(driver)
             browser.go("https://github.com/")
             browser.html()
         except Exception as e:

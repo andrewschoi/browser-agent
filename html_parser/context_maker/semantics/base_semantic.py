@@ -1,5 +1,6 @@
 import json
 from bs4.element import Tag, NavigableString
+from exceptions.NotSemanticElementException import NotSemanticElementException
 from lxml import html
 
 
@@ -23,13 +24,20 @@ class Semantic:
         .build()
     """
 
-    def __init__(self, tag=None, context=None):
+    def __init__(self, soup, tag=None, context=None):
+        self._soup = soup
+
         self._tag = tag
         self._id = tag.get("id", None)
         self._name = tag.get("name", None)
         self._tag_name = tag.name  # this is the tag type (i.e. h1)
         self._classes = tag.get("class", None)
         self._xpath = self._xpath_from_tag(tag)
+
+        self._label_text = ""
+        label = self.soup.find("label", {"for": self.id})
+        if label is not None:
+            self._label_text = label.text.strip()
 
         self._context = context
         self._children = []
@@ -69,6 +77,10 @@ class Semantic:
         return self._xpath
 
     @property
+    def label_text(self):
+        return self._label_text
+
+    @property
     def context(self):
         return self._context
 
@@ -83,6 +95,10 @@ class Semantic:
     @property
     def parents(self):
         return self._parents
+
+    @property
+    def soup(self):
+        return self._soup
 
     def with_children(self):
         self._children = self._context.children[self._tag]
@@ -173,44 +189,42 @@ class Semantic:
             }
         )
 
-    def semantic_comparator(self, type):
-        if self._name == "input":
-            if self._type is None:
+    def semantic_comparator(self):
+        if self._tag_name == "input":
+            type_ = self.tag.get("type", None)
+            if type_ is None:
                 return -1
-            if self._type == "email":
+            if type_ == "email":
                 return -1
-            if self._type == "password":
+            if type_ == "password":
                 return -1
-            if self._type == "text":
+            if type_ == "text":
                 return -1
-            if self._type == "submit":
+            if type_ == "submit":
                 return 1
+            else:
+                return -1
 
-        if self._name == "select":
+        elif self._tag_name == "select":
             return -1
 
-        if self._name == "a":
+        elif self._tag_name == "a":
             return 0
 
-        if self._name == "button":
+        elif self._tag_name == "button":
             return 1
+        else:
+            raise NotSemanticElementException()
+          
 
     def __lt__(self, other):
-        return self.semantic_comparator(self._name) < other.semantic_comparator(
-            other.name
-        )
+        return self.semantic_comparator() < other.semantic_comparator()
 
     def __eq__(self, other):
-        return self.semantic_comparator(self._name) == other.semantic_comparator(
-            other.name
-        )
+        return self.semantic_comparator() == other.semantic_comparator()
 
     def __gt__(self, other):
-        return self.semantic_comparator(self._name) > other.semantic_comparator(
-            other.name
-        )
+        return self.semantic_comparator() > other.semantic_comparator()
 
     def __ne__(self, other):
-        return self.semantic_comparator(self._name) != other.semantic_comparator(
-            other.name
-        )
+        return self.semantic_comparator() != other.semantic_comparator()
